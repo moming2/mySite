@@ -26,3 +26,8 @@ def count(request):
             # for row in result:
             #     objDict.append(row)
     return HttpResponse(json.dumps(result))
+
+@csrf_exempt
+def count2(request):
+    result2 = "test"
+    return HttpResponse(result2)
