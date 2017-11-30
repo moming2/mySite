@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+<link rel="stylesheet" href="/static/js/jquery-easyui-1.4.3/themes/default/easyui.css" />
+<link rel="stylesheet" href="/static/js/jquery-easyui-1.4.3/themes/icon.css" />
+<link rel="stylesheet" href="/static/css/main.css" />
+<link rel="stylesheet" href="/static/js/chart/css/default.css" />
+<link rel="stylesheet" href="/static/js/chart/css/normalize.css" />
+<script type="text/javascript" src="/static/js/jquery-easyui-1.4.3/jquery.min.js"></script>
+<script type="text/javascript" src="/static/js/jquery-easyui-1.4.3/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/static/js/chart/js/chart.js"></script>
+</head>
+<body>{% csrf_token %}
+    <div id="cc" class="easyui-layout" style="width: 1380px;height: 748px;">
+        <div data-options="region:'north',split:true,collapsible:false," style="color: #E6EEF8;font-size: 40px;height:100px;background: #4b72a4" align="center">
+            Chart.js 示例
+        </div>
+
+        <div data-options="region:'west',title:'指 标',collapsible:false,iconCls:'icon-tip'" style="width:180px;" align="center">
+            <div id="line" style="height: 30px;background: #daffda;font-size: 18px;"><a href="#" onclick="showLine()">ChartLine</a></div><div style="height: 1px;"></div>
+            <div id="bar" style="height: 30px;background: #daffda;font-size: 18px;"><a href="#" onclick="showBar()">ChartBar</a></div><div style="height: 1px;"></div>
+            <div id="hnut" style="height: 30px;background: #daffda;font-size: 18px;"><a href="#" onclick="showHnut()">ChartDoughnut</a></div><div style="height: 1px;"></div>
+            <div id="Area" style="height: 30px;background: #daffda;font-size: 18px;"><a href="#" onclick="showArea()">ChartPolarArea</a></div><div style="height: 1px;"></div>
+            <div id="dar" style="height: 30px;background: #daffda;font-size: 18px;"><a href="#" onclick="showRadar()">ChartRadar</a></div><div style="height: 1px;"></div>
+        </div>
+
+        <div data-options="region:'center',title:'图 表',iconCls:'icon-large-chart'" style="background:#eee;">
+            <table border="0">
+                <tr>
+                    <td>
+                        <canvas id="canvasLine" width="1170" height="600"></canvas>
+                        <canvas id="canvasBar" width="1170" height="600"></canvas>
+                        <canvas id="canvasHnut" width="1170" height="600"></canvas>
+                        <canvas id="canvasArea" width="1170" height="600"></canvas>
+                        <canvas id="canvasRadar" width="1170" height="600"></canvas>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+<script>
+    $(function(){
+        showLine();
+    });
+
+    function showLine(){
+        var Line = $('#canvasLine').attr('id');
+        $('#canvasBar').css("display","none");
+        $('#canvasLine').css("display","block");
+        $('#canvasHnut').css("display","none");
+        $('#canvasArea').css("display","none");
+        $('#canvasRadar').css("display","none");
+        $.ajax({
+            type : 'POST',
+            url  : '/count/',
+            data:{"Line":Line},
+            success:function(result){
+                var resultList=jQuery.parseJSON(result);
+                var lineChartData = {
+			        labels : [resultList[0][0],resultList[1][0],resultList[2][0]],
+			        datasets : [{
+                        fillColor: "rgba(220,220,220,0.2)",
+                        strokeColor: "rgba(220,220,220,1)",
+                        pointColor: "rgba(220,220,220,1)",
+                        pointStrokeColor: "#fff",
+                        pointHighlightFill: "#fff",
+                        pointHighlightStroke: "rgba(220,220,220,1)",
+                        data: [resultList[0][1], resultList[1][1], resultList[2][1]]
+                }
+{#				},{#}
+{#					fillColor : "rgba(151,187,205,0.2)",#}
+{#					strokeColor : "rgba(151,187,205,1)",#}
+{#					pointColor : "rgba(151,187,205,1)",#}
+{#					pointStrokeColor : "#ddd",#}
+{#					pointHighlightFill : "#ddd",#}
+{#					pointHighlightStroke : "rgba(151,187,205,1)",#}
+{#					data : [13,56,21,10,2,34,66]#}
+{#				},{#}
+{#					fillColor : "rgba(151,187,205,0.2)",#}
+{#					strokeColor : "rgba(151,187,205,1)",#}
+{#					pointColor : "rgba(151,187,205,1)",#}
+{#					pointStrokeColor : "#eee",#}
+{#					pointHighlightFill : "#eee",#}
+{#					pointHighlightStroke : "rgba(151,187,205,1)",#}
+{#					data : [12,43,22,10,54,33,99]#}
+{#				}#}
+                    ]
+		}
+		var ctx = document.getElementById("canvasLine").getContext("2d");
+		new Chart(ctx).Line(lineChartData);
+            }
+        });
+    }
+
+function showBar(){
+    $('#canvasBar').css("display","block");
+    $('#canvasLine').css("display","none");
+    $('#canvasHnut').css("display","none");
+    $('#canvasArea').css("display","none");
+    $('#canvasRadar').css("display","none");
+	var barChartData = {
+		labels : ["January","February","March","April","May","June","July"],
+		datasets : [{
+				fillColor : "rgba(220,220,220,0.5)",
+				strokeColor : "rgba(220,220,220,0.8)",
+				highlightFill: "rgba(220,220,220,0.75)",
+				highlightStroke: "rgba(220,220,220,1)",
+				data : [40,101,13,73,23,50,55]
+			},{
+				fillColor : "rgba(151,187,205,0.5)",
+				strokeColor : "rgba(151,187,205,0.8)",
+				highlightFill : "rgba(151,187,205,0.75)",
+				highlightStroke : "rgba(151,187,205,1)",
+				data : [10,30,20,60,90,29,33]
+			}]
+	}
+
+	var ctx = document.getElementById("canvasBar").getContext("2d");
+    new Chart(ctx).Bar(barChartData, {responsive : true});
+}
+function showHnut(){
+    $('#canvasBar').css("display","none");
+    $('#canvasLine').css("display","none");
+    $('#canvasHnut').css("display","block");
+    $('#canvasArea').css("display","none");
+    $('#canvasRadar').css("display","none");
+    var doughnutData = [{
+		value: 300,
+		color:"#F7464A",
+		highlight: "#FF5A5E",
+		label: "Red"
+	},{
+		value: 50,
+		color: "#46BFBD",
+		highlight: "#5AD3D1",
+		label: "Green"
+	},{
+		value: 100,
+		color: "#FDB45C",
+		highlight: "#FFC870",
+		label: "Yellow"
+	},{
+		value: 40,
+		color: "#949FB1",
+		highlight: "#A8B3C5",
+		label: "Grey"
+	},{
+		value: 120,
+		color: "#4D5360",
+		highlight: "#616774",
+		label: "Dark Grey"
+	}];
+	var ctx = document.getElementById("canvasHnut").getContext("2d");
+	new Chart(ctx).Doughnut(doughnutData, {responsive : true});
+}
+function showArea(){
+    $('#canvasBar').css("display","none");
+    $('#canvasLine').css("display","none");
+    $('#canvasHnut').css("display","none");
+    $('#canvasArea').css("display","block");
+    $('#canvasRadar').css("display","none");
+   var polarData = [{
+					value: 300,
+					color:"#F7464A",
+					highlight: "#FF5A5E",
+					label: "Red"
+				},{
+					value: 50,
+					color: "#46BFBD",
+					highlight: "#5AD3D1",
+					label: "Green"
+				},{
+					value: 100,
+					color: "#FDB45C",
+					highlight: "#FFC870",
+					label: "Yellow"
+				},{
+					value: 40,
+					color: "#949FB1",
+					highlight: "#A8B3C5",
+					label: "Grey"
+				},{
+					value: 120,
+					color: "#4D5360",
+					highlight: "#616774",
+					label: "Dark Grey"
+				}];
+
+				var ctx = document.getElementById("canvasArea").getContext("2d");
+				new Chart(ctx).PolarArea(polarData, {responsive:true});
+}
+function showRadar(){
+    $('#canvasBar').css("display","none");
+    $('#canvasLine').css("display","none");
+    $('#canvasHnut').css("display","none");
+    $('#canvasArea').css("display","none");
+    $('#canvasRadar').css("display","block");
+    var radarChartData = {
+		labels: ["Eating", "Drinking", "Sleeping", "Designing", "Coding", "Cycling", "Running"],
+		datasets: [{
+				fillColor: "rgba(220,220,220,0.2)",
+				strokeColor: "rgba(220,220,220,1)",
+				pointColor: "rgba(220,220,220,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(220,220,220,1)",
+				data: [65,59,90,81,56,55,40]
+			},{
+				fillColor: "rgba(151,187,205,0.2)",
+				strokeColor: "rgba(151,187,205,1)",
+				pointColor: "rgba(151,187,205,1)",
+				pointStrokeColor: "#fff",
+				pointHighlightFill: "#fff",
+				pointHighlightStroke: "rgba(151,187,205,1)",
+				data: [28,48,40,19,96,27,100]
+			}]
+	};
+
+		new Chart(document.getElementById("canvasRadar").getContext("2d")).Radar(radarChartData, {responsive: true});
+}
+</script>
+</body>
+</html>
